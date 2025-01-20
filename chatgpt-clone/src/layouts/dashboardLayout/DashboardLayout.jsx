@@ -4,18 +4,18 @@ import { useAuth } from "@clerk/clerk-react";
 import { useEffect } from "react";
 
 const DashboardLayout = () => {
-  const { userID, isLoaded } = useAuth();
+  const { userId, isLoaded } = useAuth();
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isLoaded && !userID) {
+    if (isLoaded && !userId) {
       navigate("/sign-in");
     }
-  }, [isLoaded, userID, navigate]);
+  }, [isLoaded, userId, navigate]);
 
-  if (!isLoaded) {
-    return "Loading....";
-  }
+  if (!isLoaded) return "Loading...";
+
   return (
     <div className="dashboardLayout">
       <div className="menu">MENU</div>
