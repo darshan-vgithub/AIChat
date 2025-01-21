@@ -1,8 +1,23 @@
 import express from "express";
+import cors from "cors";
 import ImageKit from "imagekit";
 
 const port = process.env.PORT || 3000;
 const app = express();
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      const allowedOrigins = ["http://localhost:5173", "http://localhost:5173/"];
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
 const imagekit = new ImageKit({
   urlEndpoint: process.env.IMAGE_KIT_ENDPOINT,
@@ -16,5 +31,5 @@ app.get("/api/upload", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log("Server is listening on 3000");
+  console.log(`Server is listening on ${port}`);
 });
