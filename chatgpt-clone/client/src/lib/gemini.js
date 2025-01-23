@@ -15,7 +15,7 @@ const safetySettings = [
   },
 ];
 
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMIMI_ENDPOINT);
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMIMI_PUBLIC_KEY);
 
 const model = genAI.getGenerativeModel({
   model: "gemini-1.5-flash",
