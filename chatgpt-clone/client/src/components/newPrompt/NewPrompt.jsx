@@ -10,9 +10,15 @@ const NewPrompt = () => {
   const [answer, setAnswer] = useState("");
   const endRef = useRef(null);
 
+  const [img, setImg] = useState({
+    isLoading: false,
+    error: "",
+    dbData: {},
+  });
+
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
+  }, [question, answer, img.dbData]);
 
   const add = async (text) => {
     setQuestion(text);
@@ -33,11 +39,6 @@ const NewPrompt = () => {
     add(text);
   };
 
-  const [img, setImg] = useState({
-    isLoading: false,
-    error: "",
-    dbData: {},
-  });
   return (
     <>
       {img.isLoading && <div className="">Loading...</div>}
