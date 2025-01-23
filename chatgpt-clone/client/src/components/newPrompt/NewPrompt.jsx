@@ -17,20 +17,57 @@ const NewPrompt = () => {
     aiData: {},
   });
 
+  const chat = model.startChat({
+    history: [
+      {
+        role: "user",
+        parts: [{ text: "Hello I have two dogs in my house" }],
+      },
+      {
+        role: "model",
+        parts: [{ text: "Great to meet you. What would you like to know?" }],
+      },
+    ],
+    generationConfig: {
+      // maxOutputTokens:100
+    },
+  });
+
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [question, answer, img.dbData]);
 
   const add = async (text) => {
     setQuestion(text);
+    setAnswer(""); // Clear the answer for a new question
 
-    const result = await model.generateContent(
-      Object.entries(img.aiData).length ? [img.aiData, text] : [text]
-    );
-    const response = await result.response;
-    setAnswer(response.text());
+    try {
+      const result = await chat.sendMessageStream(
+        Object.entries(img.aiData).length ? [img.aiData, text] : [text]
+      );
+
+      let accumulatedText = "";
+
+      // Access the `stream` property which is the async iterable
+      if (
+        result.stream &&
+        typeof result.stream[Symbol.asyncIterator] === "function"
+      ) {
+        for await (const chunk of result.stream) {
+          const chunkText = chunk.text();
+          accumulatedText += chunkText;
+          setAnswer(accumulatedText); // Update the answer progressively
+        }
+      } else {
+        console.error("Unexpected result format:", result);
+        setAnswer("Unable to process the response.");
+      }
+    } catch (error) {
+      console.error("Error in sendMessageStream:", error);
+      setAnswer("Something went wrong.");
+    }
+
     setImg({ isLoading: false, error: "", dbData: {}, aiData: {} });
-
     console.log(text);
   };
 
