@@ -23,6 +23,8 @@ app.use(
   })
 );
 
+app.use(express.json());
+
 const Connect = async () => {
   try {
     await mongoose.connect(process.env.MONGO);
@@ -41,8 +43,12 @@ app.get("/api/upload", (req, res) => {
   const result = imagekit.getAuthenticationParameters();
   res.send(result);
 });
+app.post("/api/chats", (req, res) => {
+  const { text } = req.body;
+  console.log(text);
+});
 
 app.listen(port, () => {
-  Connect()
+  Connect();
   console.log(`Server is listening on ${port}`);
 });
