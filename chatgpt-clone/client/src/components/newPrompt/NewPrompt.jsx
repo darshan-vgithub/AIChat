@@ -3,6 +3,7 @@ import "./newPrompt.css";
 import Upload from "../upload/Upload";
 import { IKImage } from "imagekitio-react";
 import model from "../../lib/gemini";
+import Markdown from "react-markdown";
 
 const NewPrompt = () => {
   const [question, setQuestion] = useState("");
@@ -49,7 +50,11 @@ const NewPrompt = () => {
         />
       )}
       {question && <div className="message user">{question}</div>}
-      {answer && <div className="message">{answer}</div>}
+      {answer && (
+        <div className="message">
+          <Markdown>{answer}</Markdown>
+        </div>
+      )}
       <div className="endChat" ref={endRef}></div>
       <div className="newPrompt">
         <form className="newForm" onSubmit={handleSubmit}>
