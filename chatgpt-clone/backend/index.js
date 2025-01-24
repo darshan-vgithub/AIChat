@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import ImageKit from "imagekit";
 import UserChats from "./models/userChats.js";
 import Chat from "./models/chat.js";
+import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -48,6 +49,11 @@ const imagekit = new ImageKit({
   privateKey: process.env.IMAGE_KIT_PRIVATE_KEY,
 });
 
+app.get("/api/test", ClerkExpressRequireAuth(), (req, res) => {
+  console.log("success");
+  res.send("Success!!!!");
+});
+
 // ImageKit upload authentication endpoint
 app.get("/api/upload", (req, res) => {
   const result = imagekit.getAuthenticationParameters();
@@ -55,7 +61,7 @@ app.get("/api/upload", (req, res) => {
 });
 
 // API to handle chat creation
-app.post("/api/chats", async (req, res) => {
+app.post("/api/chats", ClerkExpressRequireAuth(), async (req, res) => {
   const { userId, text } = req.body;
 
   // Validate request body
@@ -110,6 +116,10 @@ app.post("/api/chats", async (req, res) => {
   }
 });
 
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(401).send("Unauthenticated");
+});
 // Start the server
 app.listen(port, () => {
   connectToMongoDB();
